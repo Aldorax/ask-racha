@@ -12,6 +12,7 @@ import { useTheme } from "next-themes"; // Import useTheme
 
 export function AskRachaChat() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isCompact, setIsCompact] = useState(false);
   const {
     messages,
     input,
@@ -43,11 +44,10 @@ export function AskRachaChat() {
     // Conditionally apply the custom gradient class for 'storacha' theme,
     // otherwise use the solid background from theme variables.
     <div
-      className={`flex h-screen md:w-full overflow-x-hidden ${
-        theme === "storacha"
+      className={`flex h-screen md:w-full overflow-x-hidden ${theme === "storacha"
           ? "bg-storacha-gradient" // Apply the custom gradient class
           : "bg-background" // Use theme's solid background for other themes (light/dark)
-      }`}
+        }`}
     >
       {/* Animated Background */}
       {/* Only show animated background for the 'storacha' theme, using theme-aware colors */}
@@ -69,6 +69,8 @@ export function AskRachaChat() {
         isInitialized={isInitialized}
         suggestions={suggestions}
         setInput={setInput}
+        isCompact={isCompact}
+        onToggleCompact={() => setIsCompact(!isCompact)}
       />
 
       {/* Main Content Area: flex-1 to take available space */}

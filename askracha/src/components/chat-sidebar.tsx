@@ -10,6 +10,8 @@ import {
   Loader2,
   CheckCircle,
   AlertCircle,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import type { SystemStatus } from "@/types/chat";
 import { useTheme } from "next-themes"; // Import useTheme to access current theme
@@ -21,6 +23,8 @@ interface ChatSidebarProps {
   isInitialized: boolean;
   suggestions: string[];
   setInput: (input: string) => void;
+  isCompact?: boolean;
+  onToggleCompact?: () => void;
 }
 
 export function ChatSidebar({
@@ -30,6 +34,8 @@ export function ChatSidebar({
   isInitialized,
   suggestions,
   setInput,
+  isCompact = false,
+  onToggleCompact,
 }: ChatSidebarProps) {
   const { theme } = useTheme(); // Get the current theme
 
@@ -37,38 +43,53 @@ export function ChatSidebar({
     <>
       <aside
         className={`
-          fixed lg:relative z-50 lg:z-0 h-full w-80 lg:w-96
+          fixed lg:relative z-50 lg:z-0 h-full 
+          ${isCompact ? 'w-20 lg:w-20' : 'w-80 lg:w-96'}
           border-r border-border
-          transform transition-transform duration-300 ease-in-out
+          transform transition-all duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
           ${theme === "storacha"
-            ? "bg-sidebar-storacha-gradient backdrop-blur-none" // Apply gradient and ensure no blur. Removed bg-opacity-100 as it's for solid colors.
-            : "bg-[hsl(var(--sidebar))] backdrop-blur-none" // Directly use HSL color for solid background and ensure no blur. Removed bg-opacity-100.
+            ? "bg-sidebar-storacha-gradient backdrop-blur-none"
+            : "bg-[hsl(var(--sidebar))] backdrop-blur-none"
           }
         `}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-sidebar-border">
-          <div className="flex items-center gap-3">
+          <div className={`flex items-center ${isCompact ? '' : 'gap-3'}`}>
             <div className="w-10 h-10 bg-sidebar-primary rounded-lg flex items-center justify-center shadow-sm">
               <Sparkles className="w-5 h-5 text-sidebar-primary-foreground" />
             </div>
-            <div>
+            <div className={`${isCompact ? 'hidden' : 'block'}`}>
               <h2 className="text-lg font-semibold text-sidebar-foreground">
                 AskRacha
               </h2>
               <p className="text-sm text-sidebar-foreground/70">AI Assistant</p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="lg:hidden inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground h-10 w-10"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex gap-2">
+            {onToggleCompact && (
+              <button
+                onClick={onToggleCompact}
+                className="hidden lg:flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground h-10 w-10 text-sidebar-foreground"
+              >
+                {isCompact ? (
+                  <ChevronRight className="w-5 h-5" />
+                ) : (
+                  <ChevronLeft className="w-5 h-5" />
+                )}
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="lg:hidden inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground h-10 w-10"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className={`flex-1 overflow-y-auto p-6 space-y-6 ${isCompact ? 'hidden' : 'block'}`}>
           {/* System Status */}
           <div className="rounded-lg border bg-card p-6">
             <h3 className="font-semibold text-sidebar-foreground mb-4 flex items-center gap-2">

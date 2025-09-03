@@ -123,20 +123,24 @@ class AskRachaRAG:
         """Build LlamaIndex from loaded documents"""
         try:
             print(f"Building knowledge index from {len(self.documents)} documents...")
+            # Initialize vector store
+            self.vector_store = VectorStore(is_local=True)
+            # Ensure the collection exists at startup
+            init_result = self.vector_store.initialize_index()
+            if not init_result["success"]:
+                print(f"Warning: Vector store initialization failed: {init_result['message']}")
+            # Build index using the vector store
             self.index = VectorStoreIndex.from_documents(
                 self.documents,
-                show_progress=True
+                vector_store=self.vector_store
             )
-
             self.query_engine = self.index.as_query_engine(
                 similarity_top_k=6,
                 response_mode="tree_summarize",
                 verbose=True
             )
             print("Index and query engine built successfully")
-            
             self._save_persistent_index()
-            
         except Exception as e:
             print(f"Error building index: {e}")
     
